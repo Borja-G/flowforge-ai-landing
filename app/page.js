@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { supabase } from "../lib/supabaseClient"; // make sure this path is correct
+import { supabase } from "../lib/supabaseClient";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -10,63 +10,115 @@ export default function Home() {
     e.preventDefault();
     if (!email) return;
 
-    try {
-      const { data, error } = await supabase
-        .from("waitlist")
-        .insert([{ email }]);
+    const { error } = await supabase.from("waitlist").insert([{ email }]);
 
-      console.log("Supabase response:", { data, error }); // ← check console
-
-      if (error) {
-        setMessage("Something went wrong. See console for details.");
-      } else {
-        setMessage("Success! Your email was added to the waitlist.");
-        setEmail("");
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setMessage("Unexpected error. Check console.");
+    if (error) {
+      console.error(error);
+      setMessage("Something went wrong. Please try again.");
+    } else {
+      setMessage("You're on the waitlist!");
+      setEmail("");
     }
   };
 
   return (
     <main
       style={{
-        backgroundColor: "white",
-        color: "black",
         minHeight: "100vh",
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
+        background:
+          "radial-gradient(circle at 20% 30%, rgba(90,0,255,0.35), transparent 40%), radial-gradient(circle at 80% 70%, rgba(0,140,255,0.35), transparent 40%), #050505",
+        color: "white",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        padding: "20px",
       }}
     >
-      <h1>Test AI Automation Waitlist</h1>
-      <form
-        onSubmit={handleSubmit}
+      <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          marginTop: "20px",
+          maxWidth: "600px",
+          textAlign: "center",
         }}
       >
-        <input
-          type="email"
-          placeholder="Your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: "10px", fontSize: "16px" }}
-        />
-        <button
-          type="submit"
-          style={{ padding: "10px", fontSize: "16px", cursor: "pointer" }}
+        <h1
+          style={{
+            fontSize: "48px",
+            fontWeight: "700",
+            marginBottom: "20px",
+            letterSpacing: "-1px",
+          }}
         >
-          Test Join Waitlist
-        </button>
-      </form>
-      {message && <p style={{ marginTop: "15px" }}>{message}</p>}
+          AI Automation for Modern Businesses
+        </h1>
+
+        <p
+          style={{
+            fontSize: "18px",
+            opacity: 0.8,
+            marginBottom: "40px",
+            lineHeight: "1.5",
+          }}
+        >
+          Automate workflows, reduce manual work, and scale faster with AI-powered
+          systems. Join the waitlist to get early access.
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            gap: "10px",
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{
+              padding: "14px",
+              borderRadius: "8px",
+              border: "1px solid rgba(255,255,255,0.15)",
+              background: "rgba(255,255,255,0.05)",
+              color: "white",
+              width: "260px",
+              outline: "none",
+              fontSize: "15px",
+            }}
+          />
+
+          <button
+            type="submit"
+            style={{
+              padding: "14px 22px",
+              borderRadius: "8px",
+              border: "none",
+              background: "linear-gradient(135deg, #6a5cff, #3aa0ff)",
+              color: "white",
+              fontWeight: "600",
+              cursor: "pointer",
+              fontSize: "15px",
+            }}
+          >
+            Join Waitlist
+          </button>
+        </form>
+
+        {message && (
+          <p
+            style={{
+              marginTop: "20px",
+              opacity: 0.8,
+            }}
+          >
+            {message}
+          </p>
+        )}
+      </div>
     </main>
   );
 }
